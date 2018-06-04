@@ -27,7 +27,7 @@ public class UnionFind {
 
        for(int i = 1; i <= numElements; i++) {
            up[i] = -1;
-           // weight is already initialized as 0
+           weight[i] = 1;
        }
    } 
  
@@ -42,6 +42,8 @@ public class UnionFind {
    public void union (int i, int j) { 
 		//your code comes here
 
+       // this code assumes that i and j are indeed the roots (representatives of their respective sets)
+
        if (weight[i] < weight[j]) {
            up[i] = j;
            weight[j] += weight[i];
@@ -50,7 +52,6 @@ public class UnionFind {
            up[j] = i;
            weight[i] += weight[j];
        }
-       numSets--;
    } 
  
    /** 
@@ -61,10 +62,19 @@ public class UnionFind {
     */ 
    public int find (int i) { 
 		//your code comes here
-      if (up[i] == -1) {
-          return i;
-      }
-      return find(up[i]);
+
+       //find the root, and save it
+       int root = i;
+       while(up[root] != -1) {
+          root = up[root];
+       }
+
+       // traverse again, making each node in the path point to the root
+       while (i != root) {
+           up[i] = root;
+           i = up[i];
+       }
+       return root;
    } 
  
    /** 
@@ -74,7 +84,13 @@ public class UnionFind {
     */ 
    public int getNumSets() { 
 		//your code comes here
-		return numSets;
+       int count = 0;
+       for (int i : up) {
+           if (i == -1) {
+               count++;
+           }
+       }
+		return count;
    } 
  
    /** 
@@ -93,7 +109,7 @@ public class UnionFind {
     */ 
    private void debugPrintFind() { 
  
-      System.out.print ("find:   "); 
+      System.out.print ("find:   ");
       for (int i = 1; i < up.length; i++) 
          System.out.print (find (i) + " "); 
       System.out.println (""); 

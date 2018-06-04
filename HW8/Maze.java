@@ -15,6 +15,7 @@ public class Maze {
    private int startY;	 // y-coordinate for the start pixel
    private int endX;	 // x-coordinate for the end pixel
    private int endY;	 // y-coordinate for the end pixel
+    private int counter = 0;
   
   /** 
     * Constructor - reads image, and decomposes it into its connected components.
@@ -25,7 +26,29 @@ public class Maze {
     */ 
    public Maze (String fileName) { 
 		//your code comes here
-   } 
+       image = new DisplayImage(fileName);
+       uf = new UnionFind((image.width() * image.height()) + image.width());
+       boolean startFound = false;
+       for (int x = 0; x < image.width(); x++) {
+           for (int y = 0; y < image.height(); y++) {
+               if (image.isRed(x, y)) {
+                   if (!startFound) {
+
+                       startFound = true;
+                       startX = x;
+                       startY = y;
+                   }
+                   else {
+                       endX = x;
+                       endY = y;
+                   }
+                   image.set(x, y, Color.WHITE);
+               }
+               checkAndConnectNeighbors(x, y);
+           }
+       }
+       image.show();
+   }
  
    /** 
     * Generates a unique integer id from (x, y) coordinates. 
@@ -38,10 +61,40 @@ public class Maze {
     */ 
    private int pixelToId (int x, int y) { 
 		//your code comes here
-        return 0;
-   } 
- 
-   /** 
+        return y * image.width() + x;
+   }
+
+
+    /**
+     * This method checks (x, y's) neighbors.
+     * Imagine a square grid:
+     *  _______
+     * |. . . .|
+     * |. . . .|
+     * |. . . .|
+     * |. . . .|
+     * ---------
+     * If we start at the left upper corner, and only check the bottom and right neighbors iteratively, we
+     * will eventually have checked between each cell and it's neighbor exactly once
+     *
+     */
+    private void checkAndConnectNeighbors(int x, int y) {
+        if (x + 1 < image.width()) {
+            connect(x, y, x + 1 , y);
+        }
+        if (y + 1 < image.height()) {
+            connect(x, y, x, y + 1);
+        }
+        if (x - 1 >= 0) {
+            connect(x, y, x -1, y);
+        }
+        if (y - 1 >= 0) {
+            connect(x , y, x ,y - 1);
+        }
+    }
+
+
+    /**
     * Connects two pixels if they both belong to the same image 
     * area (background or foreground), and are not already connected. 
     * It is assumed that the pixels are neighbours.
@@ -50,9 +103,12 @@ public class Maze {
     * @param y1 y-coordinate of first pixel. 
     * @param x2 x-coordinate of second pixel. 
     * @param y2 y-coordinate of second pixel. 
-    */ 
+    */
    public void connect (int x1, int y1, int x2, int y2) { 
 		//your code comes here
+       if ((image.isOn(x1, y1) && image.isOn(x2, y2)) || (!image.isOn(x1, y1) && !image.isOn(x2, y2))) {
+           uf.union(pixelToId(x1, y1), pixelToId(x2, y2));
+       }
    } 
  
 
@@ -68,7 +124,8 @@ public class Maze {
     */ 
    public boolean areConnected (int x1, int y1, int x2, int y2) { 
 		//your code comes here
-		return false;
+		return uf.find(pixelToId(x1, y1)) == uf.find(pixelToId(x2, y2));
+
    } 
  
    /** 
@@ -78,7 +135,7 @@ public class Maze {
     */ 
    public int getNumComponents() { 
 		//your code comes here
-		return 0;
+		return uf.getNumSets();
    } 
  
    /**
@@ -89,7 +146,7 @@ public class Maze {
     */
    public boolean mazeHasSolution(){
 		//your code comes here
-		return false;
+		return areConnected(startX, startY, endX, endY);
    }
    /** 
     * Creates a visual representation of the connected components. 
