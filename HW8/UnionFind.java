@@ -8,26 +8,49 @@ public class UnionFind {
  
    private int up[]; 
    private int weight[]; 
-   int numSets; 
- 
+   int numSets;
+
  
    /** 
-    * Constructor - initializes up and weight arrays. 
-    * 
+    * Constructor - initializes up and weight arrays.
+    *
+    * Student - Since our elements are number 1 to numElements,
+    * it makes sense to start the arrays from 1, thus, we'll ignore up[0] and weight[0]
+    * This has little to no effect in the long run (both in time and space complexity)
     * @param numElements initial number of singleton sets. 
     */ 
    public UnionFind (int numElements) { 
 		//your code comes here
+       this.up = new int[numElements + 1];
+       this.weight = new int[numElements + 1];
+       this.numSets = numElements;
+
+       for(int i = 1; i <= numElements; i++) {
+           up[i] = -1;
+           // weight is already initialized as 0
+       }
    } 
  
    /** 
-    * Unites two sets using weigthed union. 
-    * 
+    * Unites two sets using weighted union.
+    *
+    * Lecture pseudo code implemented as Java
+    *
     * @param i representative of first set. 
     * @param j representative of second set. 
     */ 
    public void union (int i, int j) { 
 		//your code comes here
+
+       if (weight[i] < weight[j]) {
+           up[i] = j;
+           weight[j] += weight[i];
+       }
+       else {
+           up[j] = i;
+           weight[i] += weight[j];
+       }
+       numSets--;
    } 
  
    /** 
@@ -38,6 +61,10 @@ public class UnionFind {
     */ 
    public int find (int i) { 
 		//your code comes here
+      if (up[i] == -1) {
+          return i;
+      }
+      return find(up[i]);
    } 
  
    /** 
@@ -47,7 +74,7 @@ public class UnionFind {
     */ 
    public int getNumSets() { 
 		//your code comes here
-		return 0;
+		return numSets;
    } 
  
    /** 
