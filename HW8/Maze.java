@@ -27,7 +27,7 @@ public class Maze {
    public Maze (String fileName) { 
 		//your code comes here
        image = new DisplayImage(fileName);
-       uf = new UnionFind((image.width() * image.height()) + image.width());
+       uf = new UnionFind((image.width() * image.height()));
        boolean startFound = false;
        for (int x = 0; x < image.width(); x++) {
            for (int y = 0; y < image.height(); y++) {
@@ -85,12 +85,6 @@ public class Maze {
         if (y + 1 < image.height()) {
             connect(x, y, x, y + 1);
         }
-        if (x - 1 >= 0) {
-            connect(x, y, x -1, y);
-        }
-        if (y - 1 >= 0) {
-            connect(x , y, x ,y - 1);
-        }
     }
 
 
@@ -107,7 +101,9 @@ public class Maze {
    public void connect (int x1, int y1, int x2, int y2) { 
 		//your code comes here
        if ((image.isOn(x1, y1) && image.isOn(x2, y2)) || (!image.isOn(x1, y1) && !image.isOn(x2, y2))) {
-           uf.union(pixelToId(x1, y1), pixelToId(x2, y2));
+           if (!areConnected(x1, y1, x2, y2)) {
+               uf.union(uf.find(pixelToId(x1, y1)), uf.find(pixelToId(x2, y2)));
+           }
        }
    } 
  
@@ -176,8 +172,11 @@ public class Maze {
             if (index == -1) { 
                usedIds.add (componentId); 
                index = usedIds.size() - 1; 
-            } 
-            compImg.set (x, y, colors[index]); 
+            }
+            if (index >= colors.length) {
+                index = index - 1;
+            }
+            compImg.set (x, y, colors[index]);
          } 
  
       return compImg; 

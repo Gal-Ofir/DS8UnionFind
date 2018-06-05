@@ -39,20 +39,22 @@ public class UnionFind {
     * @param i representative of first set. 
     * @param j representative of second set. 
     */ 
-   public void union (int i, int j) { 
-		//your code comes here
+   public void union (int i, int j) {
+       //your code comes here
 
        // this code assumes that i and j are indeed the roots (representatives of their respective sets)
+       if (i != j) {
 
-       if (weight[i] < weight[j]) {
-           up[i] = j;
-           weight[j] += weight[i];
+           if (weight[i] < weight[j]) {
+               up[i] = j;
+               weight[j] += weight[i];
+           } else {
+               up[j] = i;
+               weight[i] += weight[j];
+           }
+           numSets--;
        }
-       else {
-           up[j] = i;
-           weight[i] += weight[j];
-       }
-   } 
+   }
  
    /** 
     * Finds the set representative, and applies path compression. 
@@ -64,11 +66,11 @@ public class UnionFind {
 		//your code comes here
 
        //find the root, and save it
+       if (i == 0) return 0;
        int root = i;
        while(up[root] != -1) {
           root = up[root];
        }
-
        // traverse again, making each node in the path point to the root
        while (i != root) {
            up[i] = root;
@@ -84,13 +86,7 @@ public class UnionFind {
     */ 
    public int getNumSets() { 
 		//your code comes here
-       int count = 0;
-       for (int i : up) {
-           if (i == -1) {
-               count++;
-           }
-       }
-		return count;
+		return numSets;
    } 
  
    /** 
@@ -99,7 +95,7 @@ public class UnionFind {
    private void debugPrintUp() { 
  
       System.out.print ("up:     "); 
-      for (int i = 1; i < up.length; i++) 
+      for (int i = 1; i < up.length; i++)
          System.out.print (up[i] + " "); 
       System.out.println (""); 
    } 
@@ -110,7 +106,7 @@ public class UnionFind {
    private void debugPrintFind() { 
  
       System.out.print ("find:   ");
-      for (int i = 1; i < up.length; i++) 
+      for (int i = 1; i < up.length; i++)
          System.out.print (find (i) + " "); 
       System.out.println (""); 
    } 
@@ -121,7 +117,7 @@ public class UnionFind {
    private void debugPrintWeight() { 
  
       System.out.print ("weight: "); 
-      for (int i = 1; i < weight.length; i++) 
+      for (int i = 1; i < weight.length; i++)
          System.out.print (weight[i] + " "); 
       System.out.println (""); 
    } 
@@ -170,4 +166,4 @@ public class UnionFind {
       System.out.println ("Number of sets: " + uf.getNumSets()); 
       System.out.println(); 
    } 
-} 
+}
