@@ -44,6 +44,10 @@ public class Maze {
                    }
                    image.set(x, y, Color.WHITE);
                }
+           }
+       }
+       for (int x = 0; x < image.width(); x++) {
+           for (int y = 0; y < image.height(); y++) {
                checkAndConnectNeighbors(x, y);
            }
        }
@@ -148,54 +152,51 @@ public class Maze {
     * Creates a visual representation of the connected components. 
     * 
     * @return a new image with each component colored in a random color. 
-    */ 
-   public DisplayImage getComponentImage() { 
- 
-      DisplayImage compImg = new DisplayImage (image.width(), image.height()); 
-      ArrayList<Integer> usedIds = new ArrayList<Integer>(); 
-      int numComponents = getNumComponents(); 
-      final int MAX_COLOR = 0xffffff; 
-      Color colors[] = new Color[numComponents]; 
- 
-      colors[0] = new Color (0, 0, 100); 
-      for (int c = 1; c < numComponents; c++) 
-         colors[c] = new Color ((int)(Math.random() * MAX_COLOR)); 
- 
-      for (int x = 0; x < image.width(); x++) 
-         for (int y = 0; y < image.height(); y++) { 
-            int componentId = uf.find (pixelToId (x, y)); 
-            // Check if this id already exists (inefficient for a large number of components). 
-            int index = -1; 
-            for (int i = 0; i < usedIds.size(); i++) 
-               if (usedIds.get (i) == componentId) 
-                  index = i; 
-            if (index == -1) { 
-               usedIds.add (componentId); 
-               index = usedIds.size() - 1; 
-            }
-            if (index >= colors.length) {
-                index = index - 1;
-            }
-            compImg.set (x, y, colors[index]);
-         } 
- 
-      return compImg; 
-   } 
- 
-   /** 
-    * Various tests for the segmentation functionality. 
-    * 
-    * @param args command line arguments - name of file to process. 
-    */ 
-   public static void main (String[] args) { 
- 
-	  Maze maze = new Maze (args[0]); 
- 
-      System.out.println (maze.mazeHasSolution());
- 
-      System.out.println ("Number of components: " + maze.getNumComponents()); 
- 
-      DisplayImage compImg = maze.getComponentImage(); 
-      compImg.show(); 
-   } 
+    */
+   public DisplayImage getComponentImage() {
+
+       DisplayImage compImg = new DisplayImage (image.width(), image.height());
+       ArrayList<Integer> usedIds = new ArrayList<Integer>();
+       int numComponents = getNumComponents();
+       final int MAX_COLOR = 0xffffff;
+       Color colors[] = new Color[numComponents];
+
+       colors[0] = new Color (0, 0, 100);
+       for (int c = 1; c < numComponents; c++)
+           colors[c] = new Color ((int)(Math.random() * MAX_COLOR));
+
+       for (int x = 0; x < image.width(); x++)
+           for (int y = 0; y < image.height(); y++) {
+               int componentId = uf.find (pixelToId (x, y));
+               // Check if this id already exists (inefficient for a large number of components).
+               int index = -1;
+               for (int i = 0; i < usedIds.size(); i++)
+                   if (usedIds.get (i) == componentId)
+                       index = i;
+               if (index == -1) {
+                   usedIds.add (componentId);
+                   index = usedIds.size() - 1;
+               }
+               compImg.set (x, y, colors[index]);
+           }
+
+       return compImg;
+   }
+
+    /**
+     * Various tests for the segmentation functionality.
+     *
+     * @param args command line arguments - name of file to process.
+     */
+    public static void main (String[] args) {
+
+        Maze maze = new Maze (args[0]);
+
+        System.out.println (maze.mazeHasSolution());
+
+        System.out.println ("Number of components: " + maze.getNumComponents());
+
+        DisplayImage compImg = maze.getComponentImage();
+        compImg.show();
+    }
 } 

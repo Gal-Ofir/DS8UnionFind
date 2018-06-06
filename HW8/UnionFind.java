@@ -86,7 +86,13 @@ public class UnionFind {
     */ 
    public int getNumSets() { 
 		//your code comes here
-		return numSets;
+       int count = 0;
+       for (int i : up) {
+           if (i == -1) {
+               count++;
+           }
+       }
+		return count;
    } 
  
    /** 
