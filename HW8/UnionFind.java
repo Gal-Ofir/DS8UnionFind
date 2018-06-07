@@ -25,7 +25,7 @@ public class UnionFind {
        this.weight = new int[numElements + 1];
        this.numSets = numElements;
 
-       for(int i = 1; i <= numElements; i++) {
+       for(int i = 0; i <= numElements; i++) {
            up[i] = -1;
            weight[i] = 1;
        }
@@ -66,7 +66,6 @@ public class UnionFind {
 		//your code comes here
 
        //find the root, and save it
-       if (i == 0) return 0;
        int root = i;
        while(up[root] != -1) {
           root = up[root];
@@ -86,14 +85,8 @@ public class UnionFind {
     */ 
    public int getNumSets() { 
 		//your code comes here
-       int count = 0;
-       for (int i : up) {
-           if (i == -1) {
-               count++;
-           }
-       }
-		return count;
-   } 
+       return numSets;
+   }
  
    /** 
     * Prints the contents of the up array. 
